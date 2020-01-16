@@ -52,44 +52,44 @@ export class SocketIoConnector extends Connector {
      * Get a channel instance by name.
      */
     channel(name: string): SocketIoChannel {
-        if (!this.channels[name]) {
-            this.channels[name] = new SocketIoChannel(this.socket, name, this.options);
+        if (!this.options.keyPrefix + this.channels[name]) {
+            this.channels[this.options.keyPrefix + name] = new SocketIoChannel(this.socket, this.options.keyPrefix + name, this.options);
         }
 
-        return this.channels[name];
+        return this.channels[this.options.keyPrefix + name];
     }
 
     /**
      * Get a private channel instance by name.
      */
     privateChannel(name: string): SocketIoPrivateChannel {
-        if (!this.channels['private-' + name]) {
-            this.channels['private-' + name] = new SocketIoPrivateChannel(this.socket, 'private-' + name, this.options);
+        if (!this.channels[this.options.keyPrefix + 'private-' + name]) {
+            this.channels[this.options.keyPrefix + 'private-' + name] = new SocketIoPrivateChannel(this.socket, this.options.keyPrefix + 'private-' + name, this.options);
         }
 
-        return this.channels['private-' + name];
+        return this.channels[this.options.keyPrefix + 'private-' + name];
     }
 
     /**
      * Get a presence channel instance by name.
      */
     presenceChannel(name: string): SocketIoPresenceChannel {
-        if (!this.channels['presence-' + name]) {
-            this.channels['presence-' + name] = new SocketIoPresenceChannel(
+        if (!this.channels[this.options.keyPrefix + 'presence-' + name]) {
+            this.channels[this.options.keyPrefix + 'presence-' + name] = new SocketIoPresenceChannel(
                 this.socket,
-                'presence-' + name,
+                this.options.keyPrefix + 'presence-' + name,
                 this.options
             );
         }
 
-        return this.channels['presence-' + name];
+        return this.channels[this.options.keyPrefix + 'presence-' + name];
     }
 
     /**
      * Leave the given channel, as well as its private and presence variants.
      */
     leave(name: string): void {
-        let channels = [name, 'private-' + name, 'presence-' + name];
+        let channels = [this.options.keyPrefix + name, this.options.keyPrefix + 'private-' + name, this.options.keyPrefix + 'presence-' + name];
 
         channels.forEach(name => {
             this.leaveChannel(name);
